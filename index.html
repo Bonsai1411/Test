@@ -67,14 +67,14 @@
         visibility: visible !important;
     }
 
-    .forest-overlay {
+     .forest-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.35); 
-        box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
+        background: rgba(0, 0, 0, 0.1); /* BÄM! Holt das Wald-GIF mit maximaler Leuchtkraft nach vorn! */
+        box-shadow: inset 0 0 140px rgba(0,0,0,0.85); /* Erzeugt einen edlen, tiefen Bühnenrand-Schatten */
         z-index: 1;
     }
 
@@ -85,7 +85,11 @@
         flex-direction: column;
         align-items: center;
         padding: 20px;
+        background: rgba(0, 0, 0, 0.45); /* Legt ein unsichtbares, schützendes Schatten-Schild hinter den Text */
+        border-radius: 16px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
+
 
     .magic-text {
         color: #ffffff;
