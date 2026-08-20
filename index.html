@@ -73,7 +73,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.35); /* Bildkontrast optimieren */
+        background: rgba(0, 0, 0, 0.35); 
         box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
         z-index: 1;
     }
@@ -99,10 +99,6 @@
         text-align: center;
     }
 
-    /* =====================================================
-       🎰 DIE FOTOREALISTISCHE GRAPHIK-KARTE AUS DEM NEBEL
-       Schwebt majestätisch im märkischen Raum
-       ===================================================== */
     .playing-card-image {
         width: 170px;
         height: 250px;
@@ -111,7 +107,7 @@
         margin-top: 25px;
         transform: translateY(30px) scale(0.9);
         animation: cardFloat 4s ease-in-out infinite alternate;
-        object-fit: contain; /* Garantiert perfekte Proportionen */
+        object-fit: contain;
     }
 
     .birthday-text {
@@ -134,7 +130,7 @@
 
 <div id="debug-console">
     ==================================================<br>
-    🚀 SYSTEM-LABOR 3.0: GRAPHIK-RELAIS AKTIV<br>
+    🚀 SYSTEM-LABOR 4.5: INTERNATIONALE SHOW AKTIV<br>
     ==================================================<br>
     [STATUS] Warte auf Phase 0: „zusammen“...
 </div>
@@ -142,1306 +138,290 @@
 <div id="show-screen">
     <div class="forest-overlay"></div>
     <div class="magic-content">
-        <!-- Der psychologische Vorhersage-Text -->
         <div class="magic-text" id="res-prediction">Verbinde Gedankenkanäle...</div>
         
-        <!-- BÄM!!! DAS FILMISCHE GRAPHIK-ELEMENT -->
         <img class="playing-card-image" id="res-karte" src="karten/rueckseite.png" alt="Spielkarte">
 
         <div class="magic-text birthday-text" id="res-geburtstag"></div>
     </div>
 </div>
 
-
 <script>
-
-
-/* =====================================================
-   GRUNDVARIABLEN
-   ===================================================== */
-
 let phase = 0;
-
 let kartenFarbe = "";
-
 let kartenWert = 0;
-
 let zuschauerName = "";
-
 let geburtsTag = null;
-
 let geburtsMonat = null;
-
 let geburtsDatum = "";
-
 let istGeburtstag = false;
 
-
-/* =====================================================
-   SPRACHPUFFER
-   ===================================================== */
-
 let phase1Text = "";
-
 let phase2Text = "";
-
 let phase3Text = "";
 
-
 let verarbeitetesResultat = 0;
-
 let benutzerScrollt = false;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const consoleDiv = document.getElementById("debug-console");
 
-
-/* =====================================================
-   SPEECH RECOGNITION
-   ===================================================== */
-
-const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-
-const consoleDiv =
-    document.getElementById(
-        "debug-console"
-    );
-
-
-/* =====================================================
-   SCROLLVERHALTEN
-   ===================================================== */
-
-consoleDiv.addEventListener(
-    "scroll",
-    () => {
-
-        if (
-            consoleDiv.scrollHeight -
-            consoleDiv.scrollTop >
-            consoleDiv.clientHeight + 30
-        ) {
-
-            benutzerScrollt = true;
-
-        } else {
-
-            benutzerScrollt = false;
-        }
-
+consoleDiv.addEventListener("scroll", () => {
+    if (consoleDiv.scrollHeight - consoleDiv.scrollTop > consoleDiv.clientHeight + 30) {
+        benutzerScrollt = true;
+    } else {
+        benutzerScrollt = false;
     }
-);
-
-
-/* =====================================================
-   KONSOLE
-   ===================================================== */
+});
 
 function logToConsole(text) {
-
     if (consoleDiv) {
-
-        consoleDiv.innerHTML +=
-            "<br>" + text;
-
-
+        consoleDiv.innerHTML += "<br>" + text;
         if (!benutzerScrollt) {
-
-            consoleDiv.scrollTop =
-                consoleDiv.scrollHeight;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
     }
 }
 
-
-/* =====================================================
-   DEUTSCHE ZAHLEN
-   ===================================================== */
-
 const deutscheZahlen = {
-
-    "null": 0,
-
-    "eins": 1,
-    "ein": 1,
-
-    "zwei": 2,
-
-    "drei": 3,
-
-    "vier": 4,
-
-    "fünf": 5,
-    "funf": 5,
-
-    "sechs": 6,
-
-    "sieben": 7,
-
-    "acht": 8,
-
-    "neun": 9,
-
-    "zehn": 10,
-
-    "elf": 11,
-
-    "zwölf": 12,
-    "zwolf": 12,
-
-    "dreizehn": 13,
-
-    "vierzehn": 14,
-
-    "fünfzehn": 15,
-    "funfzehn": 15,
-
-    "sechzehn": 16,
-
-    "siebzehn": 17,
-
-    "achtzehn": 18,
-
-    "neunzehn": 19,
-
-    "zwanzig": 20,
-
-    "einundzwanzig": 21,
-
-    "zweiundzwanzig": 22,
-
-    "dreiundzwanzig": 23,
-
-    "vierundzwanzig": 24,
-
-    "fünfundzwanzig": 25,
-    "funfundzwanzig": 25,
-
-    "sechsundzwanzig": 26,
-
-    "siebenundzwanzig": 27,
-
-    "achtundzwanzig": 28,
-
-    "neunundzwanzig": 29,
-
-    "dreißig": 30,
-    "dreissig": 30,
-
-    "einunddreißig": 31,
-    "einunddreissig": 31
+    "null": 0, "eins": 1, "ein": 1, "zwei": 2, "drei": 3, "vier": 4, "fünf": 5, "funf": 5, "sechs": 6, "sieben": 7, "acht": 8, "neun": 9,
+    "zehn": 10, "elf": 11, "zwölf": 12, "zwolf": 12, "dreizehn": 13, "vierzehn": 14, "fünfzehn": 15, "funfzehn": 15, "sechzehn": 16,
+    "siebzehn": 17, "achtzehn": 18, "neunzehn": 19, "zwanzig": 20, "einundzwanzig": 21, "zweiundzwanzig": 22, "dreiundzwanzig": 23,
+    "vierundzwanzig": 24, "fünfundzwanzig": 25, "funfundzwanzig": 25, "sechsundzwanzig": 26, "siebenundzwanzig": 27, "achtundzwanzig": 28,
+    "neunundzwanzig": 29, "dreißig": 30, "dreissig": 30, "einunddreißig": 31, "einunddreissig": 31
 };
 
-
-/* =====================================================
-   ZAHLEN AUS TEXT HOLEN
-   ===================================================== */
-
 function findeZahlen(text) {
-
     let zahlen = [];
-
-
-    let gesaeubert =
-        text.replace(
-            /\./g,
-            " "
-        );
-
-
-    /*
-    Ziffern wie 20 oder 06
-    */
-
-    const mitZiffern =
-        gesaeubert.match(
-            /\d+/g
-        );
-
-
+    let gesaeubert = text.replace(/\./g, " ");
+    const mitZiffern = gesaeubert.match(/\d+/g);
     if (mitZiffern) {
-
-        for (
-            const zahl of mitZiffern
-        ) {
-
-            const wert =
-                parseInt(
-                    zahl,
-                    10
-                );
-
-
-            if (!isNaN(wert)) {
-
-                zahlen.push(wert);
-            }
+        for (const zahl of mitZiffern) {
+            const wert = parseInt(zahl, 10);
+            if (!isNaN(wert)) { zahlen.push(wert); }
         }
     }
-
-
-    /*
-    Zahlwörter
-    */
-
-    const woerter =
-        gesaeubert
-            .toLowerCase()
-            .replace(
-                /[.,!?;:]/g,
-                " "
-            )
-            .split(/\s+/)
-            .filter(Boolean);
-
-
-    for (
-        const wort of woerter
-    ) {
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                deutscheZahlen,
-                wort
-            )
-        ) {
-
-            zahlen.push(
-                deutscheZahlen[wort]
-            );
+    const woerter = gesaeubert.toLowerCase().replace(/[.,!?;:]/g, " ").split(/\s+/).filter(Boolean);
+    for (const wort of woerter) {
+        if (Object.prototype.hasOwnProperty.call(deutscheZahlen, wort)) {
+            zahlen.push(deutscheZahlen[wort]);
         }
     }
-
-
     return zahlen;
 }
 
-
-/* =====================================================
-   CODEWÖRTER ROBUST ERKENNEN
-   ===================================================== */
-
 function verarbeiteCodewoerter(text) {
-
     let etwasGefunden = false;
+    text = text.toLowerCase()
+        .replace(/\bein\s+mal/g, "einmal")
+        .replace(/\bzwei\s+mal/g, "zweimal")
+        .replace(/\bdrei\s+mal/g, "dreimal")
+        .replace(/\bvier\s+mal/g, "viermal");
 
-
-    /*
-    Leerzeichen zwischen Zahl und „mal“
-    normalisieren.
-
-    WICHTIG:
-    Nur Kombinationen mit „mal“ werden
-    als Kartenwert-Code erkannt.
-
-    „eins“ / „zwei“ / „drei“ / „vier“
-    allein zählen NICHT.
-    */
-
-    text = text
-        .toLowerCase()
-        .replace(
-            /\bein\s+mal\b/g,
-            "einmal"
-        )
-        .replace(
-            /\bzwei\s+mal\b/g,
-            "zweimal"
-        )
-        .replace(
-            /\bdrei\s+mal\b/g,
-            "dreimal"
-        )
-        .replace(
-            /\bvier\s+mal\b/g,
-            "viermal"
-        );
-
-
-    /* -----------------------------------------
-       HÄNDE = +10
-       ----------------------------------------- */
-
-    if (
-        /\bhänden\b/.test(text) ||
-        /\bhaenden\b/.test(text)
-    ) {
-
-        kartenWert += 10;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] HÄNDEN erkannt (+10)"
-        );
-    }
-
-
-    /* -----------------------------------------
-       EINMAL = +1
-       ----------------------------------------- */
-
-    if (
-        /\beinmal\b/.test(text)
-    ) {
-
-        kartenWert += 1;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] EINMAL erkannt (+1)"
-        );
-    }
-
-
-    /* -----------------------------------------
-       ZWEIMAL = +2
-       ----------------------------------------- */
-
-    if (
-        /\bzweimal\b/.test(text)
-    ) {
-
-        kartenWert += 2;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] ZWEIMAL erkannt (+2)"
-        );
-    }
-
-
-    /* -----------------------------------------
-       DREIMAL = +3
-       ----------------------------------------- */
-
-    if (
-        /\bdreimal\b/.test(text)
-    ) {
-
-        kartenWert += 3;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] DREIMAL erkannt (+3)"
-        );
-    }
-
-
-    /* -----------------------------------------
-       VIERMAL = +4
-       ----------------------------------------- */
-
-    if (
-        /\bviermal\b/.test(text)
-    ) {
-
-        kartenWert += 4;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] VIERMAL erkannt (+4)"
-        );
-    }
-
-
-    /* -----------------------------------------
-       HAND = +5
-
-       HÄNDEN darf nicht zusätzlich
-       als HAND gezählt werden.
-       ----------------------------------------- */
-
-    if (
-        !/\bhänden\b/.test(text) &&
-        !/\bhaenden\b/.test(text) &&
-        /\bhand\b/.test(text)
-    ) {
-
-        kartenWert += 5;
-
-        etwasGefunden = true;
-
-        logToConsole(
-            "👉 [CODE] HAND erkannt (+5)"
-        );
-    }
-
-
-    if (etwasGefunden) {
-
-        logToConsole(
-            "📊 RECHENWERT AKTUELL: " +
-            kartenWert
-        );
-    }
+    if (/\bhänden\b/.test(text) || /\bhaenden\b/.test(text)) { kartenWert += 10; etwasGefunden = true; logToConsole("👉 [CODE] HÄNDEN erkannt (+10)"); }
+    if (/\beinmal\b/.test(text)) { kartenWert += 1; etwasGefunden = true; logToConsole("👉 [CODE] EINMAL erkannt (+1)"); }
+    if (/\bzweimal\b/.test(text)) { kartenWert += 2; etwasGefunden = true; logToConsole("👉 [CODE] ZWEIMAL erkannt (+2)"); }
+    if (/\bdreimal\b/.test(text)) { kartenWert += 3; etwasGefunden = true; logToConsole("👉 [CODE] DREIMAL erkannt (+3)"); }
+    if (/\bviermal\b/.test(text)) { kartenWert += 4; etwasGefunden = true; logToConsole("👉 [CODE] VIERMAL erkannt (+4)"); }
+    if (!/\bhänden\b/.test(text) && !/\bhaenden\b/.test(text) && /\bhand\b/.test(text)) { kartenWert += 5; etwasGefunden = true; logToConsole("👉 [CODE] HAND erkannt (+5)"); }
+    if (etwasGefunden) { logToConsole("📊 RECHENWERT AKTUELL: " + kartenWert); }
 }
 
-
-/* =====================================================
-   BROWSERPRÜFUNG
-   ===================================================== */
-
 if (!SpeechRecognition) {
-
-    logToConsole(
-        "❌ FEHLER: Dieser Browser unterstützt webkitSpeechRecognition nicht!"
-    );
-
+    logToConsole("❌ FEHLER: Dieser Browser unterstützt webkitSpeechRecognition nicht!");
 } else {
+    const recognition = new SpeechRecognition();
+    recognition.lang = "de-DE";
+    recognition.continuous = false; 
+    recognition.interimResults = false;
 
-
-    /* =================================================
-       SPEECH RECOGNITION ERSTELLEN
-       ================================================= */
-
-    const recognition =
-        new SpeechRecognition();
-
-
-    recognition.lang =
-        "de-DE";
-
-
-    /*
-    Wichtig für Android:
-    continuous bleibt FALSE.
-    Der Neustart erfolgt kontrolliert
-    über onend.
-    */
-
-    recognition.continuous =
-        false;
-
-
-    recognition.interimResults =
-        false;
-
-
-    /* =================================================
-       STATUS-EVENTS
-       ================================================= */
-
-    recognition.onstart = () => {
-
-        logToConsole(
-            "🎤 SPRACHERKENNUNG GESTARTET"
-        );
-    };
-
-
-    recognition.onaudiostart = () => {
-
-        logToConsole(
-            "🎧 MIKROFON / AUDIO AKTIV"
-        );
-    };
-
-
-    recognition.onspeechstart = () => {
-
-        logToConsole(
-            "🗣️ SPRACHE ERKANNT"
-        );
-    };
-
-
-    /* =================================================
-       FEHLERBEHANDLUNG
-       ================================================= */
-
-    recognition.onerror =
-        (event) => {
-
-            logToConsole(
-                "⚠️ SPRACHERKENNUNGS-FEHLER: " +
-                event.error
-            );
-
-
-            if (
-                (
-                    event.error ===
-                    "no-speech"
-                ) ||
-                (
-                    event.error ===
-                    "aborted"
-                )
-            ) {
-
-                if (
-                    phase < 4
-                ) {
-
-                    setTimeout(
-                        () => {
-
-                            try {
-
-                                recognition.start();
-
-                            } catch (e) {
-
-                                /*
-                                onend übernimmt
-                                ebenfalls den
-                                normalen Neustart.
-                                */
-
-                            }
-
-                        },
-                        250
-                    );
-                }
+    recognition.onstart = () => { logToConsole("🎤 SPRACHERKENNUNG GESTARTET"); };
+    recognition.onaudiostart = () => { logToConsole("🎧 MIKROFON / AUDIO AKTIV"); };
+    recognition.onspeechstart = () => { logToConsole("🗣️ SPRACHE ERKANNT"); };
+    recognition.onerror = (event) => {
+        logToConsole("⚠️ SPRACHERKENNUNGS-FEHLER: " + event.error);
+        if (event.error === "no-speech" || event.error === "aborted") {
+            if (phase < 4) {
+                setTimeout(() => { try { recognition.start(); } catch (e) {} }, 250);
             }
-        };
+        }
+    };
 
+    recognition.onresult = (event) => {
+        for (let i = verarbeitetesResultat; i < event.results.length; i++) {
+            const result = event.results[i];
+            if (!result || !result[0]) { continue; }
+            let roherText = result[0].transcript;
+            if (!roherText) { continue; }
+            roherText = roherText.toLowerCase().trim();
+            verarbeitetesResultat = i + 1;
 
-    /* =================================================
-       SPRACHERGEBNIS
-       ================================================= */
+            let text = roherText
+                .replace(/ein\s+mal/g, "einmal").replace(/zwei\s+mal/g, "zweimal").replace(/drei\s+mal/g, "dreimal").replace(/vier\s+mal/g, "viermal")
+                .replace(/reihem\s+folge/g, "reihenfolge").replace(/reihen\s+folge/g, "reihenfolge")
+                .replace(/garten/g, "reihenfolge").replace(/kartendeckt/g, "reihenfolge").replace(/deckels/g, "reihenfolge")
+                .replace(/beachte/g, "14").replace(/achte/g, "8").replace(/ranz/g, "franz").replace(/wolf/g, "12")
+                .replace(/dein\s+datum/g, "dein datum");
 
-    recognition.onresult =
-        (event) => {
-
-
-            for (
-                let i =
-                    verarbeitetesResultat;
-
-                i <
-                event.results.length;
-
-                i++
-            ) {
-
-
-                const result =
-                    event.results[i];
-
-
-                if (
-                    !result ||
-                    !result[0]
-                ) {
-
-                    continue;
-                }
-
-
-                let roherText =
-                    result[0].transcript;
-
-
-                if (!roherText) {
-
-                    continue;
-                }
-
-
-                roherText =
-                    roherText
-                        .toLowerCase()
-                        .trim();
-
-
-                verarbeitetesResultat =
-                    i + 1;
-
-
-                /* =====================================
-                   SPRACHAUFARBEITUNG
-                   ===================================== */
-
-                let text =
-                    roherText
-
-                        .replace(
-                            /ein\s+mal/g,
-                            "einmal"
-                        )
-
-                        .replace(
-                            /zwei\s+mal/g,
-                            "zweimal"
-                        )
-
-                        .replace(
-                            /drei\s+mal/g,
-                            "dreimal"
-                        )
-
-                        .replace(
-                            /vier\s+mal/g,
-                            "viermal"
-                        )
-
-                        .replace(
-                            /reihem\s+folge/g,
-                            "reihenfolge"
-                        )
-
-                        .replace(
-                            /reihen\s+folge/g,
-                            "reihenfolge"
-                        )
-
-                        /*
-                        Bereits getestete
-                        Hörfehler
-                        */
-
-                        .replace(
-                            /garten/g,
-                            "reihenfolge"
-                        )
-
-                        .replace(
-                            /kartendeckt/g,
-                            "reihenfolge"
-                        )
-
-                        .replace(
-                            /deckels/g,
-                            "reihenfolge"
-                        )
-
-                        .replace(
-                            /beachte/g,
-                            "14"
-                        )
-
-                        .replace(
-                            /achte/g,
-                            "8"
-                        )
-
-                        .replace(
-                            /ranz/g,
-                            "franz"
-                        )
-
-                        .replace(
-                            /wolf/g,
-                            "12"
-                        )
-
-                        .replace(
-                            /dein\s+datum/g,
-                            "dein datum"
-                        );
-
-
-                logToConsole(
-                    "<br>📢 [GEHÖRT] „" +
-                    roherText +
-                    "“"
-                );
-
-
-                if (
-                    roherText !== text
-                ) {
-
-                    logToConsole(
-                        "✨ [GEBÜGELT] „" +
-                        text +
-                        "“"
-                    );
-                }
-
-
-                verarbeiteSprache(
-                    text
-                );
-            }
-        };
-
-
-    /* =====================================================
-       HAUPTVERARBEITUNG DER PHASEN
-       ===================================================== */
+            logToConsole("<br>📢 [GEHÖRT] „" + roherText + "“");
+            if (roherText !== text) { logToConsole("✨ [GEBÜGELT] „" + text + "“"); }
+            verarbeiteSprache(text);
+        }
+    };
 
     function verarbeiteSprache(text) {
-
-
-        logToConsole(
-            "🔍 [ANALYSE] Prüfe Phase " +
-            phase +
-            "..."
-        );
-
-
+        logToConsole("🔍 [ANALYSE] Prüfe Phase " + phase + "...");
         /* ================================================
            PHASE 0
            ZUSAMMEN
            ================================================ */
-
-        if (
-            phase === 0
-        ) {
-
-
-            if (
-                text.includes(
-                    "zusammen"
-                )
-            ) {
-
+        if (phase === 0) {
+            if (text.includes("zusammen")) {
                 phase = 1;
-
-
-                phase1Text =
-                    "";
-
-
-                logToConsole(
-                    "▶️ „ZUSAMMEN“ ERKANNT"
-                );
-
-
-                logToConsole(
-                    "PHASE 1: SUCHE KARTENFARBE"
-                );
+                phase1Text = "";
+                logToConsole("▶️ „ZUSAMMEN“ ERKANNT -> PHASE 1: SUCHE KARTENFARBE");
             }
-
-
             return;
         }
-
 
         /* ================================================
            PHASE 1
            KARTENFARBE
            ================================================ */
+        if (phase === 1) {
+            phase1Text += " " + text;
+            phase1Text = phase1Text.replace(/reihen\s+folge/g, "reihenfolge");
 
-        if (
-            phase === 1
-        ) {
+            if (phase1Text.includes("passiert")) { kartenFarbe = "Pik ♠"; }
+            else if (phase1Text.includes("geschehen")) { kartenFarbe = "Herz ♥"; }
+            else if (phase1Text.includes("gewesen")) { kartenFarbe = "Kreuz ♣"; }
+            else if (phase1Text.includes("gehabt")) { kartenFarbe = "Karo ♦"; }
 
-            /*
-            Sprachfragmente sammeln.
-            */
-
-            phase1Text +=
-                " " + text;
-
-
-            /*
-            REIHEN FOLGE
-            zusammenführen.
-            */
-
-            phase1Text =
-                phase1Text.replace(
-                    /reihen\s+folge/g,
-                    "reihenfolge"
-                );
-
-
-            /*
-            KARTENFARBE
-            */
-
-            if (
-                phase1Text.includes(
-                    "passiert"
-                )
-            ) {
-
-                kartenFarbe =
-                    "Pik ♠";
-
-
-            } else if (
-                phase1Text.includes(
-                    "geschehen"
-                )
-            ) {
-
-                kartenFarbe =
-                    "Herz ♥";
-
-
-            } else if (
-                phase1Text.includes(
-                    "gewesen"
-                )
-            ) {
-
-                kartenFarbe =
-                    "Kreuz ♣";
-
-
-            } else if (
-                phase1Text.includes(
-                    "gehabt"
-                )
-            ) {
-
-                kartenFarbe =
-                    "Karo ♦";
-            }
-
-
-            /*
-            Farbe gefunden
-            */
-
-            if (
-                kartenFarbe !== ""
-            ) {
-
-                logToConsole(
-                    "🃏 KARTENFARBE: " +
-                    kartenFarbe
-                );
-
-
+            if (kartenFarbe !== "") {
+                logToConsole("🃏 KARTENFARBE: " + kartenFarbe);
                 phase = 2;
-
-
-                /*
-                Ganz wichtig:
-                Phase 2 bekommt einen
-                leeren Puffer.
-                */
-
-                phase2Text =
-                    "";
-
-
-                logToConsole(
-                    "PHASE 2: CODEWÖRTER ZÄHLEN"
-                );
-
-
+                phase2Text = "";
+                logToConsole("PHASE 2: CODEWÖRTER ZÄHLEN");
                 return;
             }
-
-
             return;
         }
-
 
         /* ================================================
            PHASE 2
            CODEWÖRTER + REIHENFOLGE
            ================================================ */
+        if (phase === 2) {
+            phase2Text += " " + text;
+            phase2Text = phase2Text.replace(/reihen\s+folge/g, "reihenfolge");
+            verarbeiteCodewoerter(text);
 
-        if (
-            phase === 2
-        ) {
+            const reihenfolgeErkannt = phase2Text.includes("reihenfolge");
+            const folgeKartenErkannt = phase2Text.includes("folge") && phase2Text.includes("karten") && phase2Text.includes("bestimmt");
+            const kartenDeckBestimmt = phase2Text.includes("karten") && phase2Text.includes("deck") && phase2Text.includes("bestimmt");
 
-            /*
-            Alle Sprachfragmente sammeln.
-            */
-
-            phase2Text +=
-                " " + text;
-
-
-            /*
-            Getrennt gehörtes
-            REIHEN FOLGE zusammenführen.
-            */
-
-            phase2Text =
-                phase2Text.replace(
-                    /reihen\s+folge/g,
-                    "reihenfolge"
-                );
-
-
-            /*
-            AKTUELLES SPRACHFRAGMENT
-            nach Codewörtern durchsuchen.
-
-            Wichtig:
-            verarbeiteCodewoerter()
-            erkennt nur:
-
-            einmal
-            zweimal
-            dreimal
-            viermal
-            hand
-            händen
-
-            Reine Zahlen wie
-            „eins“, „zwei“, „drei“
-            werden hier NICHT gezählt.
-            */
-
-            verarbeiteCodewoerter(
-                text
-            );
-
-
-            /*
-            REIHENFOLGE / KARTENFOLGE
-            */
-
-            const reihenfolgeErkannt =
-                phase2Text.includes(
-                    "reihenfolge"
-                );
-
-
-            const folgeKartenErkannt =
-                phase2Text.includes("folge") &&
-                phase2Text.includes("karten") &&
-                phase2Text.includes("bestimmt");
-
-
-            const kartenDeckBestimmt =
-                phase2Text.includes("karten") &&
-                phase2Text.includes("deck") &&
-                phase2Text.includes("bestimmt");
-
-
-            if (
-                reihenfolgeErkannt ||
-                folgeKartenErkannt ||
-                kartenDeckBestimmt
-            ) {
-
+            if (reihenfolgeErkannt || folgeKartenErkannt || kartenDeckBestimmt) {
                 phase = 3;
-
                 phase3Text = "";
-
-
-                logToConsole(
-                    "🔒 KARTENFOLGE / REIHENFOLGE ERKANNT"
-                );
-
-
-                logToConsole(
-                    "KARTENWERT FESTGESETZT: " +
-                    kartenWert
-                );
-
-
-                logToConsole(
-                    "PHASE 3: NAME / DATUM"
-                );
-
-
+                logToConsole("🔒 REIHENFOLGE ERKANNT -> KARTENWERT: " + kartenWert + " -> PHASE 3: NAME / DATUM");
                 return;
             }
-
-
             return;
         }
-
 
         /* ================================================
            PHASE 3
            NAME / DATUM / HEUTE / VERDECKT
            ================================================ */
+        if (phase === 3) {
+            phase3Text += " " + text;
 
-        if (
-            phase === 3
-        ) {
-
-
-            /*
-            Alle Sprachfragmente
-            aus Phase 3 sammeln.
-            */
-
-            phase3Text +=
-                " " + text;
-
-
-            /* --------------------------------------------
-               NAME
-               -------------------------------------------- */
-
-            const datumPosition =
-                phase3Text.indexOf(
-                    "dein datum"
-                );
-
-
-            if (
-                datumPosition > 0 &&
-                zuschauerName === ""
-            ) {
-
-
-                let nameTeil =
-                    phase3Text
-                        .substring(
-                            0,
-                            datumPosition
-                        )
-                        .trim();
-
-
-                const woerter =
-                    nameTeil.split(
-                        /\s+/
-                    );
-
-
-                if (
-                    woerter.length > 0
-                ) {
-
-
-                    nameTeil =
-                        woerter[
-                            woerter.length - 1
-                        ]
-                        .replace(
-                            /^[,.:;!? ]+|[,.:;!? ]+$/g,
-                            ""
-                        );
-
-
-                    if (
-                        nameTeil !== "" &&
-                        nameTeil.toLowerCase() !==
-                            "name"
-                    ) {
-
-
-                        zuschauerName =
-                            nameTeil
-                                .charAt(0)
-                                .toUpperCase() +
-                            nameTeil.slice(1);
-
-
-                        logToConsole(
-                            "👤 NAME: " +
-                            zuschauerName
-                        );
+            /* NAME RECHNEN */
+            const datumPosition = phase3Text.indexOf("dein datum");
+            if (datumPosition > 0 && zuschauerName === "") {
+                let nameTeil = phase3Text.substring(0, datumPosition).trim();
+                const woerter = nameTeil.split(/\s+/);
+                if (woerter.length > 0) {
+                    nameTeil = woerter[woerter.length - 1].replace(/^[,.:;!? ]+|[,.:;!? ]+$/g, "");
+                    if (nameTeil !== "" && nameTeil.toLowerCase() !== "name") {
+                        zuschauerName = nameTeil.charAt(0).toUpperCase() + nameTeil.slice(1);
+                        logToConsole("👤 NAME: " + zuschauerName);
                     }
                 }
             }
 
-
-            /* --------------------------------------------
-               HEUTE
-               -------------------------------------------- */
-
-            if (
-                geburtsTag === null &&
-                phase3Text.includes(
-                    "heute"
-                )
-            ) {
-
-
-                const heute =
-                    new Date();
-
-
-                geburtsTag =
-                    heute.getDate();
-
-
-                geburtsMonat =
-                    heute.getMonth() + 1;
-
-
-                geburtsDatum =
-                    String(
-                        geburtsTag
-                    ).padStart(
-                        2,
-                        "0"
-                    ) +
-                    "." +
-                    String(
-                        geburtsMonat
-                    ).padStart(
-                        2,
-                        "0"
-                    );
-
-
-                logToConsole(
-                    "📅 DATUM: HEUTE → " +
-                    geburtsDatum
-                );
+            /* HEUTE TRIGGER */
+            if (geburtsTag === null && phase3Text.includes("heute")) {
+                const heute = new Date();
+                geburtsTag = heute.getDate();
+                geburtsMonat = heute.getMonth() + 1;
+                geburtsDatum = String(geburtsTag).padStart(2, "0") + "." + String(geburtsMonat).padStart(2, "0");
+                logToConsole("📅 DATUM: HEUTE → " + geburtsDatum);
             }
 
-
-            /* --------------------------------------------
-               DATUM NACH „ALSO“
-               -------------------------------------------- */
-
-            if (
-                geburtsTag === null
-            ) {
-
-
-                const alsoPosition =
-                    phase3Text.indexOf(
-                        "also"
-                    );
-
-
-                if (
-                    alsoPosition !== -1
-                ) {
-
-
-                    const nachAlso =
-                        phase3Text.substring(
-                            alsoPosition + 4
-                        );
-
-
-                    const zahlen =
-                        findeZahlen(
-                            nachAlso
-                        );
-
-
-                    if (
-                        zahlen.length >= 2
-                    ) {
-
-
-                        const tag =
-                            zahlen[0];
-
-
-                        const monat =
-                            zahlen[1];
-
-
-                        if (
-                            tag >= 1 &&
-                            tag <= 31 &&
-                            monat >= 1 &&
-                            monat <= 12
-                        ) {
-
-
-                            geburtsTag =
-                                tag;
-
-
-                            geburtsMonat =
-                                monat;
-
-
-                            geburtsDatum =
-                                String(
-                                    tag
-                                ).padStart(
-                                    2,
-                                    "0"
-                                ) +
-                                "." +
-                                String(
-                                    monat
-                                ).padStart(
-                                    2,
-                                    "0"
-                                );
-
-
-                            logToConsole(
-                                "📅 DATUM: " +
-                                geburtsDatum
-                            );
+            /* ALSO TRIGGER */
+            if (geburtsTag === null) {
+                const alsoPosition = phase3Text.indexOf("also");
+                if (alsoPosition !== -1) {
+                    const nachAlso = phase3Text.substring(alsoPosition + 4);
+                    const zahlen = findeZahlen(nachAlso);
+                    if (zahlen.length >= 2) {
+                        const tag = zahlen[0];
+                        const monat = zahlen[1];
+                        if (tag >= 1 && tag <= 31 && monat >= 1 && monat <= 12) {
+                            geburtsTag = tag;
+                            geburtsMonat = monat;
+                            geburtsDatum = String(tag).padStart(2, "0") + "." + String(monat).padStart(2, "0");
+                            logToConsole("📅 DATUM: " + geburtsDatum);
                         }
                     }
                 }
             }
 
-
-            /* --------------------------------------------
-               VERDECKT = ABSCHLUSS (Ihre neue, intelligente Show-Inszenierung!)
-               -------------------------------------------- */
+            /* =====================================================
+               🛑 VERDECKT = DIE FINAL-MATRIX MIT GRAFIK-ZÜNDUNG
+               ===================================================== */
             if (phase3Text.includes("verdeckt")) {
                 phase = 4;
-                logToConsole("🛑 „VERDECKT“ ERKANNT");
-                logToConsole("🎤 SPRACHERKENNUNG WIRD PLANMÄSSIG BEENDET");
+                logToConsole("🛑 „VERDECKT“ ERKANNT -> TRICK BEENDET");
 
-                /* Geburtstag prüfen */
                 const heute = new Date();
-                const heuteTag = heute.getDate();
-                const heuteMonat = heute.getMonth() + 1;
-                istGeburtstag = geburtsTag === heuteTag && geburtsMonat === heuteMonat;
+                istGeburtstag = geburtsTag === heute.getDate() && geburtsMonat === (heute.getMonth() + 1);
 
-                /* =====================================================
-                   👑 BÄM!!! DIE INTELIGENTE TEXT-MATRIX FÜR DIE SHOW
-                   Hält jeden Fehler von Google unbarmherzig vom Publikum fern!
-                   ===================================================== */
+                /* 👑 PSYCHOLOGISCHER FORMEL-BÜGLER */
                 let finalerShowText = "";
-
-                // Variante A: Volltreffer - Name + Datum erfolgreich erkannt
                 if (zuschauerName !== "" && geburtsDatum !== "") {
                     finalerShowText = zuschauerName + ", du wirst den " + geburtsDatum + " als Datum nennen.";
-                }
-                // Variante B: Nur Datum erkannt, Name fehlt
-                else if (zuschauerName === "" && geburtsDatum !== "") {
+                } else if (zuschauerName === "" && geburtsDatum !== "") {
                     finalerShowText = "Du wirst den " + geburtsDatum + " als Datum nennen.";
-                }
-                // Variante C: Nur Name erkannt, Datum fehlt
-                else if (zuschauerName !== "" && geburtsDatum === "") {
+                } else if (zuschauerName !== "" && geburtsDatum === "") {
                     finalerShowText = zuschauerName + ", dies ist deine persönliche Vorhersage.";
-                }
-                // Variante D: Blindflug - Name und Datum fehlen komplett
-                else {
+                } else {
                     finalerShowText = "Dies ist deine persönliche Vorhersage.";
                 }
 
-                /* =====================================================
-                   🃏 DIE FOTOREALISTISCHE GRAPHIK-AUSLESE
-                   Übersetzt das Getriebe in exakte Dateinamen im Ordner karten/
-                   ===================================================== */
-                let farbPräfix = "herz"; // Standard-Fallbesserung
+                /* 🃏 BILD-DATEINAME ZUSAMMENBAUEN (Ass ist 1) */
+                let farbPräfix = "herz";
                 if (kartenFarbe.includes("Pik")) farbPräfix = "pik";
                 else if (kartenFarbe.includes("Kreuz")) farbPräfix = "kreuz";
                 else if (kartenFarbe.includes("Karo")) farbPräfix = "karo";
-                else if (kartenFarbe.includes("Herz")) farbPräfix = "herz";
 
-                // BÄM! Das S26 baut hier vollautomatisch den Namen des Bildes zusammen,
-                // z.B. "karten/herz_1.png" für das Ass oder "karten/pik_11.png" für den Buben!
                 let finalerBildPfad = "karten/" + farbPräfix + "_" + kartenWert + ".png";
 
-                /* =====================================================
-                   📺 VISUELLES MATERIALISIEREN IM WEBVIEW
-                   ===================================================== */
-                // Den psychologisch sicheren Text in das edle CSS-Kleid injizieren
+                /* 📺 WEBVIEW BEFEUERN */
                 const resPredictionEl = document.getElementById("res-prediction");
-                if (resPredictionEl) {
-                    resPredictionEl.innerHTML = finalerShowText;
-                }
+                if (resPredictionEl) { resPredictionEl.innerHTML = finalerShowText; }
                 
-                // Die fotorealistische Spielkarte live in das <img>-Tag jagen
                 const kartenBildEl = document.getElementById("res-karte");
-                if (kartenBildEl) {
-                    kartenBildEl.src = finalerBildPfad;
-                }
+                if (kartenBildEl) { kartenBildEl.src = finalerBildPfad; }
 
-                // Falls Geburtstag aktiv ist, zünden wir den goldenen Bonustext
                 const geburtstagsAnzeige = document.getElementById("res-geburtstag");
                 if (istGeburtstag && geburtstagsAnzeige) {
                     geburtstagsAnzeige.innerHTML = "Alles Gute zum Geburtstag! 🎂✨";
                 }
 
-                // Das edle Show-Screen-Element inklusive Wald-GIF glüht butterweich aus dem Pechschwarz auf!
                 const showScreenEl = document.getElementById("show-screen");
-                if (showScreenEl) {
-                    showScreenEl.classList.add("visible");
-                }
+                if (showScreenEl) { showScreenEl.classList.add("visible"); }
 
-                /* LOG IN DER LABORKONSELE */
                 logToConsole("--------------------------------");
                 logToConsole("🏆 FINAL-REPORT DER SHOW-LOGIK:");
                 logToConsole("FARBE GELESEN: " + kartenFarbe);
@@ -1455,165 +435,40 @@ if (!SpeechRecognition) {
                 return;
             }
             return;
-
-    /* =====================================================
-       MIKROFON-RESTART
-       ===================================================== */
-
-    let neustartTimer = null;
-
-    let antiLoopSperre = false;
-
-
-    recognition.onend = () => {
-
-
-        /*
-        Nach „Verdeckt“
-        NICHT wieder starten.
-        */
-
-        if (
-            phase >= 4
-        ) {
-
-            return;
         }
-
-
-        /*
-        Verhindert mehrere
-        gleichzeitige Neustarts.
-        */
-
-        if (
-            antiLoopSperre
-        ) {
-
-            return;
-        }
-
-
-        antiLoopSperre =
-            true;
-
-
-        if (
-            neustartTimer
-        ) {
-
-            clearTimeout(
-                neustartTimer
-            );
-        }
-
-
-        neustartTimer =
-            setTimeout(
-                () => {
-
-
-                    try {
-
-
-                        verarbeitetesResultat =
-                            0;
-
-
-                        recognition.start();
-
-
-                        setTimeout(
-                            () => {
-
-                                antiLoopSperre =
-                                    false;
-
-                            },
-                            1000
-                        );
-
-
-                    } catch (e) {
-
-
-                        antiLoopSperre =
-                            false;
-                    }
-
-
-                },
-                800
-            );
-    };
-
-
-    /* =====================================================
-       ERSTER START
-       ===================================================== */
-
-    try {
-
-        recognition.start();
-
-    } catch (e) {
-
-        logToConsole(
-            "❌ STARTFEHLER: " +
-            e.message
-        );
     }
 
+    /* MIKROFON-RESTART WITH ANTI-LOOP */
+    let neustartTimer = null;
+    let antiLoopSperre = false;
+
+    recognition.onend = () => {
+        logToConsole("⏹️ SPRACHERKENNUNG BEENDET");
+        if (phase < 4) {
+            if (antiLoopSperre) return;
+            antiLoopSperre = true;
+            if (neustartTimer) { clearTimeout(neustartTimer); }
+            neustartTimer = setTimeout(() => {
+                try {
+                    verarbeitetesResultat = 0; 
+                    recognition.start();
+                    setTimeout(() => { antiLoopSperre = false; }, 1000);
+                } catch (e) { antiLoopSperre = false; }
+            }, 800); 
+        }
+    };
+
+    try { recognition.start(); } catch (e) { logToConsole("❌ STARTFEHLER: " + e.message); }
 }
 
-
-/* =====================================================
-   NOT-AUS
-   3 SEKUNDEN OBEN LINKS GEDRÜCKT HALTEN
-   ===================================================== */
-
+/* NOT-AUS */
 let exitTimer = null;
-
-
-document
-    .getElementById(
-        "emergency-exit"
-    )
-    .addEventListener(
-        "touchstart",
-        () => {
-
-
-            exitTimer =
-                setTimeout(
-                    () => {
-
-                        location.reload();
-
-                    },
-                    3000
-                );
-        }
-    );
-
-
-document
-    .getElementById(
-        "emergency-exit"
-    )
-    .addEventListener(
-        "touchend",
-        () => {
-
-            clearTimeout(
-                exitTimer
-            );
-
-        }
-    );
-
+document.getElementById("emergency-exit").addEventListener("touchstart", () => {
+    exitTimer = setTimeout(() => { location.reload(); }, 3000);
+});
+document.getElementById("emergency-exit").addEventListener("touchend", () => {
+    clearTimeout(exitTimer);
+});
 </script>
-
 </body>
-
 </html>
