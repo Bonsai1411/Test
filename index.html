@@ -1364,127 +1364,97 @@ if (!SpeechRecognition) {
 
 
             /* --------------------------------------------
-               VERDECKT = ABSCHLUSS
+               VERDECKT = ABSCHLUSS (Ihre neue, intelligente Show-Inszenierung!)
                -------------------------------------------- */
-
-            if (
-                phase3Text.includes(
-                    "verdeckt"
-                )
-            ) {
-
-
+            if (phase3Text.includes("verdeckt")) {
                 phase = 4;
+                logToConsole("🛑 „VERDECKT“ ERKANNT");
+                logToConsole("🎤 SPRACHERKENNUNG WIRD PLANMÄSSIG BEENDET");
 
+                /* Geburtstag prüfen */
+                const heute = new Date();
+                const heuteTag = heute.getDate();
+                const heuteMonat = heute.getMonth() + 1;
+                istGeburtstag = geburtsTag === heuteTag && geburtsMonat === heuteMonat;
 
-                logToConsole(
-                    "🛑 „VERDECKT“ ERKANNT"
-                );
+                /* =====================================================
+                   👑 BÄM!!! DIE INTELIGENTE TEXT-MATRIX FÜR DIE SHOW
+                   Hält jeden Fehler von Google unbarmherzig vom Publikum fern!
+                   ===================================================== */
+                let finalerShowText = "";
 
+                // Variante A: Volltreffer - Name + Datum erfolgreich erkannt
+                if (zuschauerName !== "" && geburtsDatum !== "") {
+                    finalerShowText = zuschauerName + ", du wirst den " + geburtsDatum + " als Datum nennen.";
+                }
+                // Variante B: Nur Datum erkannt, Name fehlt
+                else if (zuschauerName === "" && geburtsDatum !== "") {
+                    finalerShowText = "Du wirst den " + geburtsDatum + " als Datum nennen.";
+                }
+                // Variante C: Nur Name erkannt, Datum fehlt
+                else if (zuschauerName !== "" && geburtsDatum === "") {
+                    finalerShowText = zuschauerName + ", dies ist deine persönliche Vorhersage.";
+                }
+                // Variante D: Blindflug - Name und Datum fehlen komplett
+                else {
+                    finalerShowText = "Dies ist deine persönliche Vorhersage.";
+                }
 
-                logToConsole(
-                    "🎤 SPRACHERKENNUNG WIRD BEENDET"
-                );
+                /* =====================================================
+                   🃏 DIE FOTOREALISTISCHE GRAPHIK-AUSLESE
+                   Übersetzt das Getriebe in exakte Dateinamen im Ordner karten/
+                   ===================================================== */
+                let farbPräfix = "herz"; // Standard-Fallbesserung
+                if (kartenFarbe.includes("Pik")) farbPräfix = "pik";
+                else if (kartenFarbe.includes("Kreuz")) farbPräfix = "kreuz";
+                else if (kartenFarbe.includes("Karo")) farbPräfix = "karo";
+                else if (kartenFarbe.includes("Herz")) farbPräfix = "herz";
 
+                // BÄM! Das S26 baut hier vollautomatisch den Namen des Bildes zusammen,
+                // z.B. "karten/herz_1.png" für das Ass oder "karten/pik_11.png" für den Buben!
+                let finalerBildPfad = "karten/" + farbPräfix + "_" + kartenWert + ".png";
 
-                /*
-                Geburtstag prüfen
-                */
+                /* =====================================================
+                   📺 VISUELLES MATERIALISIEREN IM WEBVIEW
+                   ===================================================== */
+                // Den psychologisch sicheren Text in das edle CSS-Kleid injizieren
+                const resPredictionEl = document.getElementById("res-prediction");
+                if (resPredictionEl) {
+                    resPredictionEl.innerHTML = finalerShowText;
+                }
+                
+                // Die fotorealistische Spielkarte live in das <img>-Tag jagen
+                const kartenBildEl = document.getElementById("res-karte");
+                if (kartenBildEl) {
+                    kartenBildEl.src = finalerBildPfad;
+                }
 
-                const heute =
-                    new Date();
+                // Falls Geburtstag aktiv ist, zünden wir den goldenen Bonustext
+                const geburtstagsAnzeige = document.getElementById("res-geburtstag");
+                if (istGeburtstag && geburtstagsAnzeige) {
+                    geburtstagsAnzeige.innerHTML = "Alles Gute zum Geburtstag! 🎂✨";
+                }
 
+                // Das edle Show-Screen-Element inklusive Wald-GIF glüht butterweich aus dem Pechschwarz auf!
+                const showScreenEl = document.getElementById("show-screen");
+                if (showScreenEl) {
+                    showScreenEl.classList.add("visible");
+                }
 
-                const heuteTag =
-                    heute.getDate();
-
-
-                const heuteMonat =
-                    heute.getMonth() + 1;
-
-
-                istGeburtstag =
-                    geburtsTag ===
-                        heuteTag &&
-                    geburtsMonat ===
-                        heuteMonat;
-
-
-                /*
-                ERGEBNIS
-                */
-
-                logToConsole(
-                    "--------------------------------"
-                );
-
-
-                logToConsole(
-                    "ERGEBNIS"
-                );
-
-
-                logToConsole(
-                    "FARBE: " +
-                    kartenFarbe
-                );
-
-
-                logToConsole(
-                    "WERT: " +
-                    kartenWert
-                );
-
-
-                logToConsole(
-                    "NAME: " +
-                    (
-                        zuschauerName ||
-                        "(kein Name erkannt)"
-                    )
-                );
-
-
-                logToConsole(
-                    "DATUM: " +
-                    (
-                        geburtsDatum ||
-                        "(kein Datum erkannt)"
-                    )
-                );
-
-
-                logToConsole(
-                    "GEBURTSTAG: " +
-                    (
-                        istGeburtstag
-                            ? "JA 🎂"
-                            : "NEIN"
-                    )
-                );
-
-
-                logToConsole(
-                    "--------------------------------"
-                );
-
-
-                /*
-                Spracherkennung
-                endgültig beenden.
-                */
+                /* LOG IN DER LABORKONSELE */
+                logToConsole("--------------------------------");
+                logToConsole("🏆 FINAL-REPORT DER SHOW-LOGIK:");
+                logToConsole("FARBE GELESEN: " + kartenFarbe);
+                logToConsole("WERT BERECHNET: " + kartenWert);
+                logToConsole("GRAFIK-DATEI GELADEN: " + finalerBildPfad);
+                logToConsole("TEXT INJEKTION: " + finalerShowText);
+                logToConsole("GEBURTSTAG: " + (istGeburtstag ? "JA 🎂" : "NEIN"));
+                logToConsole("--------------------------------");
 
                 recognition.stop();
-
-
                 return;
             }
-
-
             return;
-        }
-    }
-
 
     /* =====================================================
        MIKROFON-RESTART
