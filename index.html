@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mystery Master - Test-Labor Animation</title>
+<title>Mystery Master - Das Drehbuch</title>
 <style>
     html, body {
         margin: 0;
@@ -44,6 +44,9 @@
         z-index: 99998;
     }
 
+    /* =====================================================
+       🎬 SEKUNDE 0: DER WALD ERWACHT AUS DEM PECHSCHWARZ
+       ===================================================== */
     #show-screen {
         position: fixed;
         top: 0;
@@ -52,15 +55,14 @@
         height: 100vh !important;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         z-index: 88888;
         opacity: 0;
         visibility: hidden;
-        /* BÄM! Ihr echtes, animiertes Waber-GIF erwacht aus dem Stall! */
         background: url('./wald.gif') no-repeat center center !important;
         background-size: cover !important;
-        transition: opacity 3.5s ease-in-out, visibility 3.5s;
+        transition: opacity 2.0s ease-in-out, visibility 2.0s;
     }
 
     #show-screen.visible {
@@ -74,10 +76,31 @@
         left: 0;
         width: 100% !important;
         height: 100% !important;
-        background: rgba(0, 0, 0, 0.2); 
-        box-shadow: inset 0 0 140px rgba(0,0,0,0.85);
+        background: rgba(0, 0, 0, 0.15); 
+        box-shadow: inset 0 0 140px rgba(0,0,0,0.9);
         z-index: 1;
     }
+
+    /* =====================================================
+       🌫️ SEKUNDE 7: DER NEBEL VERDICHTET SICH UND VERSCHLUCKT ALLES
+       ===================================================== */
+    .moving-fog-1, .moving-fog-2 {
+        position: absolute;
+        width: 300%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 3; /* Liegt VOR Wald und Text */
+        background: url('https://githubusercontent.com') repeat-x;
+        background-size: 33% 100%;
+        opacity: 0;
+        /* Startet exakt bei Sekunde 7 und verdichtet sich über 2 Sekunden mörderisch scharf! */
+        transition: opacity 2.0s ease-in-out 7.0s;
+    }
+
+    /* Wenn sichtbar, schießt der Vordergrund-Nebel bei Sekunde 7 auf undurchdringliche Dichte hoch */
+    #show-screen.visible .moving-fog-1 { opacity: 0.75; animation: swayFog 25s linear infinite; }
+    #show-screen.visible .moving-fog-2 { opacity: 0.65; top: 10%; animation: swayFog 15s linear infinite reverse; }
 
     .magic-content {
         position: relative;
@@ -85,45 +108,93 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.45); 
-        border-radius: 16px;
+        width: 100%;
+        padding-top: 50px;
+        box-sizing: border-box;
     }
 
+    /* =====================================================
+       📝 SEKUNDE 1: DER TEXT ERSCHEINT IN GLUT-ROT
+       📝 SEKUNDE 2,5: DER TEXT BEGINNT LEBENDIG ZU ATMEN
+       📝 SEKUNDE 7: TEXT WIRD VOM NEBEL VERSCHLUCKT
+       ===================================================== */
     .magic-text {
-        color: #ffffff;
+        color: #e50914 !important; /* Unheimlich loderndes Glut-Rot */
         font-size: 24px;
         font-weight: bold;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.4);
-        margin: 20px 0;
-        letter-spacing: 3px;
-        line-height: 36px;
+        text-shadow: 0 0 15px rgba(229, 9, 20, 0.8), 0 0 35px rgba(0, 0, 0, 1);
+        margin: 0 20px 40px 20px;
+        letter-spacing: 2px;
+        line-height: 34px;
         max-width: 85vw;
         text-align: center;
+        opacity: 0;
+        /* Blend-In startet bei Sekunde 1 und läuft über 3 Sekunden */
+        transition: opacity 3.0s ease-in-out 1.0s;
+        z-index: 2; /* Wird bei Sekunde 7 vom Nebel (z-index 3) verschluckt! */
     }
 
+    /* Aktiviert das Erscheinen, das unheimliche Atmen und das Verschlucken */
+    #show-screen.visible .magic-text {
+        opacity: 1;
+        /* Bei Sekunde 2,5 schaltet sich die lebendige Atem-Animation ein! */
+        animation: textBreath 4s ease-in-out infinite alternate 2.5s;
+    }
+
+    /* =====================================================
+       🃏 SEKUNDE 8: DIE SILHOUETTE ZEICHNET SICH IM NEBEL AB
+       🃏 SEKUNDE 10: DIE SILHOUETTE WIRD ZUR ECHTEN SPIELKARTE
+       ===================================================== */
     .playing-card-image {
         width: 170px;
         height: 250px;
         border-radius: 10px;
-        box-shadow: 0 0 35px rgba(0,0,0,0.9), 0 0 40px rgba(255,255,255,0.15);
-        margin-top: 25px;
-        transform: translateY(30px) scale(0.9);
-        animation: cardFloat 4s ease-in-out infinite alternate;
+        box-shadow: 0 0 40px rgba(0,0,0,1);
+        opacity: 0;
+        /* Mörderischer Trick: Bei Sekunde 8 pechschwarz (Silhouette), bei Sekunde 10 voll sichtbar! */
+        filter: brightness(0) contrast(1); /* Macht das Bild komplett zu einer schwarzen Silhouette */
+        transform: translateY(50px) scale(0.9);
+        transition: opacity 1.5s ease-in-out 8.0s, filter 2.5s ease-in-out 10.0s, transform 3.0s ease-in-out 8.0s;
         object-fit: contain;
+        z-index: 4; /* Schwebt unblockierbar VOR dem dichten Nebel! */
+    }
+
+    /* Aktiviert die zeitgesteuerte Verwandlung auf der Bühne */
+    #show-screen.visible .playing-card-image {
+        opacity: 0.85; /* Silhouette bricht bei Sekunde 8 im Dunst durch */
+        transform: translateY(0) scale(1);
+        filter: brightness(1) contrast(1); /* Bei Sekunde 10 verpufft die Silhouette und die echte Karte strahlt! */
+        animation: cardFloat 4s ease-in-out infinite alternate 11s; /* Das sanfte Schweben startet erst ganz am Ende */
     }
 
     .birthday-text {
         color: #ffd700 !important; 
-        font-size: 22px;
+        font-size: 20px;
         text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         margin-top: 25px;
         font-weight: bold;
     }
 
+    /* =====================================================
+       🎭 DIE HOLLYWOOD-ANIMATIONS-WATT-STATIONEN
+       ===================================================== */
+    /* Der dichte Waber-Nebel */
+    @keyframes swayFog {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-33.33333%, 0, 0); }
+    }
+
+    /* Das unheimliche, lebendige Atmen und Pulsieren des Vorhersagetextes */
+    @keyframes textBreath {
+        0% { transform: scale(0.98) translate50px(0, 0); text-shadow: 0 0 15px rgba(229,9,20,0.7); }
+        50% { transform: scale(1.02) translateY(-2px); text-shadow: 0 0 25px rgba(229,9,20,1); letter-spacing: 3px; }
+        100% { transform: scale(0.99) translateX(1px); text-shadow: 0 0 18px rgba(229,9,20,0.8); }
+    }
+
+    /* Das majestätische Schweben der fertigen Karte */
     @keyframes cardFloat {
-        0% { transform: translateY(15px) rotate(-1deg) scale(0.97); box-shadow: 0 15px 30px rgba(0,0,0,0.7); }
-        100% { transform: translateY(-5px) rotate(1deg) scale(1.03); box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 35px rgba(255,255,255,0.2); }
+        0% { transform: translateY(5px) rotate(-0.5deg); box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
+        100% { transform: translateY(-15px) rotate(0.5deg); box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 30px rgba(255,255,255,0.15); }
     }
 </style>
 </head>
@@ -133,22 +204,23 @@
 
 <div id="debug-console">
     ==================================================<br>
-    🚀 SYSTEM-LABOR 4.5: ADLER GEFLOGEN & GELANDET<br>
+    🚀 SYSTEM-LABOR 4.5: DREHBUCH-TIMELINE AKTIV<br>
     ==================================================<br>
     [STATUS] Warte auf Phase 0: „zusammen“...
 </div>
 
+<!-- DAS DRAMATISCHE HOLLYWOOD-LAYOUT -->
 <div id="show-screen">
     <div class="forest-overlay"></div>
+    <div class="moving-fog-1"></div>
+    <div class="moving-fog-2"></div>
     <div class="magic-content">
         <div class="magic-text" id="res-prediction">Verbinde Gedankenkanäle...</div>
-        
-        <!-- BÄM! Startet jetzt steril und blockiert niemals das Skript! -->
-        <img class="playing-card-image" id="res-karte" src="" alt="Spielkarte">
-
+        <img class="playing-card-image" id="res-karte" src="karten/rueckseite.png" alt="Spielkarte">
         <div class="magic-text birthday-text" id="res-geburtstag"></div>
     </div>
 </div>
+
 
 <script>
 let phase = 0;
