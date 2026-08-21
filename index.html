@@ -90,11 +90,13 @@
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 10; /* BÄM! Holt den Nebel unblockierbar nach ganz vorne! */
-    background: linear-gradient(180deg, rgba(230,235,240,0.85) 0%, rgba(180,190,200,0.95) 50%, rgba(230,235,240,0.85) 100%);
+    z-index: 10;
+    /* BÄM! Massiver, dichter, milchiger Nebel-Verlauf gegen den der Wald keine Chance mehr hat! */
+    background: linear-gradient(180deg, rgba(220,225,230,0.96) 0%, rgba(240,242,245,0.99) 50%, rgba(220,225,230,0.96) 100%);
     opacity: 0;
     transition: opacity 2.5s ease-in-out 7.0s;
 }
+
 
 
     /* Wenn sichtbar, schießt der Vordergrund-Nebel bei Sekunde 7 auf undurchdringliche Dichte hoch */
@@ -119,20 +121,22 @@
        📝 SEKUNDE 7: TEXT WIRD VOM NEBEL VERSCHLUCKT
        ===================================================== */
     .magic-text {
-        color: #e50914 !important; /* Unheimlich loderndes Glut-Rot */
-        font-size: 24px;
-        font-weight: bold;
-        text-shadow: 0 0 15px rgba(229, 9, 20, 0.8), 0 0 35px rgba(0, 0, 0, 1);
-        margin: 0 20px 40px 20px;
-        letter-spacing: 2px;
-        line-height: 34px;
-        max-width: 85vw;
-        text-align: center;
-        opacity: 0;
-        /* Blend-In startet bei Sekunde 1 und läuft über 3 Sekunden */
-        transition: opacity 3.0s ease-in-out 1.0s;
-        z-index: 2; /* Wird bei Sekunde 7 vom Nebel (z-index 3) verschluckt! */
-    }
+    position: absolute; /* Löst den Text komplett von der Spielkarte! */
+    top: 8%; /* Thront bombenfest im oberen Drittel Ihres Displays */
+    color: #e50914 !important; /* Loderndes Glut-Rot */
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(229, 9, 20, 0.9), 0 0 35px rgba(0, 0, 0, 1);
+    margin: 0 20px;
+    letter-spacing: 2px;
+    line-height: 34px;
+    max-width: 90vw;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 2.0s ease-in-out 1.0s;
+    z-index: 20; /* Schwebt absolut frei vor dem Nebel! */
+}
+
 
     /* Aktiviert das Erscheinen, das unheimliche Atmen und das Verschlucken */
     #show-screen.visible .magic-text {
